@@ -6,9 +6,7 @@ namespace HandlebarsDotNet
     {
         public static void Main(string[] args)
         {
-            // string val;
-            // Console.Write("Enter template file name: ");
-            // val = Console.ReadLine();
+           
             string template = File.ReadAllText(args[0]);
             int recordNumber= 0;
 
