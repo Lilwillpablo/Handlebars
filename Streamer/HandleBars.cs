@@ -6,10 +6,10 @@ namespace HandlebarsDotNet
     {
         public static void Main(string[] args)
         {
-           
+           //loading template file
             string template = File.ReadAllText(args[0]);
             int recordNumber= 0;
-
+            //loading and reading JSON file by stream
             using (FileStream s = File.Open(args[1], FileMode.Open))
             using (StreamReader sr = new StreamReader(s))
             using (JsonReader reader = new JsonTextReader(sr))
@@ -18,6 +18,7 @@ namespace HandlebarsDotNet
                 int endIndex= 0;
                 int beginJson= 0;
                 string thisJson= "";
+                //read JSON file by stings and file validation check
                 while (!sr.EndOfStream)
                 {var jsonInput = sr.ReadLine();
                 while(!String.IsNullOrEmpty(jsonInput))
@@ -41,8 +42,10 @@ namespace HandlebarsDotNet
                             endIndex= jsonInput.IndexOf("}");
                             thisJson= thisJson + jsonInput.Substring(0, endIndex + 1);
                             jsonInput= jsonInput.Substring(endIndex + 1, jsonInput.Length - endIndex - 1);
+                            //method declaration to changing _recordNumber
                             thisJson= getBetween(thisJson, "_recordNumber", ",", recordNumber);
                             recordNumber++;
+                            //method declaration for handlebars
                             handleBars(thisJson, template);
                             thisJson= "";
                             beginJson= 0;
@@ -59,6 +62,7 @@ namespace HandlebarsDotNet
             }
             
         }
+        //method for changing _lastData strings in each JSON string by serial number 
         public static string getBetween(string strSource, string strStart, string strEnd, int value)
 {
             if (strSource.Contains(strStart) && strSource.Contains(strEnd))
@@ -76,7 +80,7 @@ namespace HandlebarsDotNet
             }
 
             
-}
+}       //methods of Handlbars
         static void handleBars(string jsonInput, string template)
         {   
             var Template= template;
@@ -153,7 +157,7 @@ namespace HandlebarsDotNet
 
             });
 
-            Handlebars.RegisterHelper("array", (writer, options, context, arguments) =>
+            Handlebars.RegisterHelper("isArray", (writer, options, context, arguments) =>
              {   var token = JToken.Parse(arguments[0].ToString());
                  
                  if (token is JArray) 
@@ -168,7 +172,8 @@ namespace HandlebarsDotNet
 
             Output(Template, json);
             Console.WriteLine(json);
-        }     
+        }
+        //method to deserializing JSON in CSV format and writing to new file
         static void Output(string Template, string json)
         {
             var compile= Handlebars.Compile(Template);
